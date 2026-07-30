@@ -1,0 +1,231 @@
+:root {
+    --red: #e63329;
+    --black: #1a1a1a;
+    --white: #ffffff;
+    --light-grey: #f5f5f5;
+    --divider: #111111;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--white);
+    color: var(--black);
+}
+
+/*navbar w red top*/
+.navbar {
+    background-color: var(--red) !important;
+    border-bottom: 4px solid var(--black);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--white) !important;
+    letter-spacing: 1px;
+}
+
+.nav-link {
+    color: rgba(255,255,255,0.9) !important;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: var(--white) !important;
+    text-decoration: underline;
+}
+
+.navbar-toggler {
+    border-color: rgba(255,255,255,0.5);
+}
+
+/*the thick black divider band bw navbar and content*/
+.pokeball-band {
+    background-color: var(--black);
+    height: 6px;
+    width: 100%;
+    position: relative;
+}
+
+/*the circular center button on the band*/
+.pokeball-center {
+    width: 36px;
+    height: 36px;
+    background: white;
+    border: 4px solid var(--black);
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    box-shadow: 0 0 0 3px var(--black);
+}
+
+/*main content area*/
+.container {
+    padding-top: 1.5rem;
+}
+
+/*cards*/
+.card {
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.card-header {
+    border-radius: 8px 8px 0 0 !important;
+    font-weight: 600;
+}
+
+/*red card headers*/
+.card-header.bg-primary {
+    background-color: var(--red) !important;
+    border-bottom: 2px solid var(--black);
+}
+
+.card-header.bg-success {
+    background-color: var(--red) !important;
+    border-bottom: 2px solid var(--black);
+}
+
+.card-header.bg-danger {
+    background-color: var(--black) !important;
+}
+
+/*buttons*/
+.btn-primary {
+    background-color: var(--red);
+    border-color: var(--red);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #c0271e;
+    border-color: #c0271e;
+}
+
+.btn-outline-primary {
+    color: var(--red);
+    border-color: var(--red);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--red);
+    border-color: var(--red);
+    color: white;
+}
+
+.btn-success {
+    background-color: var(--red);
+    border-color: var(--red);
+}
+
+.btn-success:hover {
+    background-color: #c0271e;
+    border-color: #c0271e;
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--black);
+    border-color: var(--black);
+    color: white;
+}
+
+/*alerts*/
+.alert-success {
+    background-color: #fde8e7;
+    border-color: var(--red);
+    color: #8b1c17;
+}
+
+.alert-info {
+    background-color: #f0f0f0;
+    border-color: var(--black);
+    color: var(--black);
+}
+
+.table-light th {
+    background-color: #f8f8f8;
+}
+
+/*footer w red bottom*/
+footer {
+    background-color: var(--red);
+    border-top: 4px solid var(--black);
+    color: white;
+    text-align: center;
+    padding: 14px 0;
+    margin-top: 3rem;
+    font-size: 0.9rem;
+}
+
+/*hero section on index page*/
+.hero-section {
+    background-color: var(--red);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+    margin-left: -12px;
+    margin-right: -12px;
+    margin-top: -1.5rem;
+}
+.hero-section h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.hero-section p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/*the big pokeball divider on index page*/
+.pokeball-divider {
+    background-color: var(--black);
+    height: 18px;
+    position: relative;
+    margin: 0;
+    margin-left: -12px;
+    margin-right: -12px;
+}
+
+.pokeball-btn {
+    width: 54px;
+    height: 54px;
+    background: white;
+    border: 5px solid var(--black);
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 4px var(--black), 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 5;
+}
+
+/*inner dot on the pokeball button*/
+.pokeball-btn::after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background: #ddd;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/*stat cards on dashboards*/
+.stat-card {
+    border-top: 4px solid var(--red);
+    border-radius: 10px;
+}
+
+/*badge overrides*/
+.badge.bg-primary {
+    background-color: var(--red) !important;
+}

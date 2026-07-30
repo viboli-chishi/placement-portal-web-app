@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12 d-flex justify-content-between align-items-center">
+    <div>
+      <h4>Applications for: {{ drive.job_title }}</h4>
+      <p class="text-muted mb-0">Deadline: {{ drive.application_deadline.strftime('%d %b %Y, %I:%M %p') }}</p>
+    </div>
+    <a href="{{ url_for('company_dashboard') }}" class="btn btn-outline-secondary">← Back</a>
+  </div>
+</div>
+
+<hr>
+
+{% if applications %}
+  {% for app in applications %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col-md-4">
+          <h6 class="mb-1">{{ app.student.name }}</h6>
+          <p class="text-muted small mb-0">{{ app.student.branch }} &bull; Year {{ app.student.year }}</p>
+          <p class="text-muted small mb-0">CGPA: {{ app.student.cgpa }} &bull; Roll: {{ app.student.roll_number }}</p>
+        </div>
+
+        <div class="col-md-3">
+          {% if app.student.resume_filename %}
+            <a href="{{ url_for('static', filename='uploads/' + app.student.resume_filename) }}" 
+               target="_blank" class="btn btn-sm btn-outline-primary">View Resume</a>
+          {% else %}
+            <span class="text-muted small">No resume uploaded</span>
+          {% endif %}
+        </div>
+
+        <div class="col-md-3">
+          <span class="badge 
+            {% if app.status == 'shortlisted' %}bg-success
+            {% elif app.status == 'rejected' %}bg-danger
+            {% elif app.status == 'waitlisted' %}bg-warning text-dark
+            {% else %}bg-secondary{% endif %}">
+            {{ app.status|capitalize }}
+          </span>
+          <p class="text-muted small mt-1 mb-0">Applied: {{ app.application_date.strftime('%d %b %Y') }}</p>
+        </div>
+
+        <div class="col-md-2">
+          <form method="POST" action="{{ url_for('update_application_status', app_id=app.id) }}">
+            <select name="status" class="form-select form-select-sm mb-1">
+              <option value="applied" {% if app.status == 'applied' %}selected{% endif %}>Applied</option>
+              <option value="shortlisted" {% if app.status == 'shortlisted' %}selected{% endif %}>Shortlist</option>
+              <option value="waitlisted" {% if app.status == 'waitlisted' %}selected{% endif %}>Waitlist</option>
+              <option value="rejected" {% if app.status == 'rejected' %}selected{% endif %}>Reject</option>
+              <option value="selected" {% if app.status == 'selected' %}selected{% endif %}>Select</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-primary w-100">Update</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <p class="text-muted mt-3">No applications received for this drive yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-9">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4>Student Profile</h4>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-sm">← Back to Dashboard</a>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-8">
+            <h5 class="mb-1">{{ student.name }}</h5>
+            <p class="text-muted mb-3">{{ student.branch }} &bull; Year {{ student.year }}</p>
+            <table class="table table-sm table-borderless mb-0" style="width:auto">
+              <tr><td class="text-muted pe-4">Roll No</td><td>{{ student.roll_number }}</td></tr>
+              <tr><td class="text-muted pe-4">CGPA</td><td>{{ student.cgpa }}</td></tr>
+              <tr><td class="text-muted pe-4">Phone</td><td>{{ student.phone }}</td></tr>
+              <tr><td class="text-muted pe-4">Email</td><td>{{ student.user.email }}</td></tr>
+              <tr>
+                <td class="text-muted pe-4">Account</td>
+                <td>
+                  {% if student.user.is_blacklisted %}
+                    <span class="badge bg-danger">Blacklisted</span>
+                  {% else %}
+                    <span class="badge bg-success">Active</span>
+                  {% endif %}
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-md-4 text-end">
+            {% if student.resume_filename %}
+              <a href="{{ url_for('static', filename='uploads/' + student.resume_filename) }}"
+                 target="_blank" class="btn btn-outline-primary mb-2 d-block">View Resume</a>
+            {% else %}
+              <p class="text-muted small">No resume uploaded</p>
+            {% endif %}
+
+            {% if student.user.is_blacklisted %}
+              <a href="{{ url_for('unblacklist_user', user_id=student.user_id) }}"
+                 class="btn btn-sm btn-outline-success d-block mb-1">Reactivate</a>
+            {% else %}
+              <a href="{{ url_for('blacklist_user', user_id=student.user_id) }}"
+                 class="btn btn-sm btn-outline-warning d-block mb-1"
+                 onclick="return confirm('Blacklist this student?')">Blacklist</a>
+            {% endif %}
+            <a href="{{ url_for('delete_student', student_id=student.id) }}"
+               class="btn btn-sm btn-outline-danger d-block"
+               onclick="return confirm('Permanently delete this student?')">Delete</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h5 class="mb-3">Application History</h5>
+    {% if applications %}
+    <table class="table table-hover table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Company</th>
+          <th>Job Title</th>
+          <th>Applied On</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for app in applications %}
+        <tr>
+          <td>{{ app.drive.company.company_name }}</td>
+          <td>{{ app.drive.job_title }}</td>
+          <td class="small text-muted">{{ app.application_date.strftime('%d %b %Y') }}</td>
+          <td>
+            <span class="badge
+              {% if app.status == 'selected' or app.status == 'placed' %}bg-success
+              {% elif app.status == 'shortlisted' or app.status == 'interview' %}bg-info text-dark
+              {% elif app.status == 'rejected' %}bg-danger
+              {% else %}bg-secondary{% endif %}">
+              {{ app.status | capitalize }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="text-muted">No applications yet.</p>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

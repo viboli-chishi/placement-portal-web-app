@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col-12 d-flex justify-content-between align-items-center">
+    <div>
+      <h3>{{ company.company_name }}</h3>
+      <p class="text-muted mb-0">HR: {{ company.hr_name }} &bull; {{ company.hr_phone }}</p>
+      {% if company.website %}
+        <a href="{{ company.website }}" target="_blank" class="small">{{ company.website }}</a>
+      {% endif %}
+    </div>
+    <a href="{{ url_for('create_drive') }}" class="btn btn-primary">+ Create Drive</a>
+  </div>
+</div>
+
+<hr>
+
+<!--active/approved drives-->
+<div class="row mt-3">
+  <div class="col-12">
+    <h5>Active Drives</h5>
+    {% set active = drives | selectattr('status', 'equalto', 'approved') | list %}
+    {% if active %}
+    <table class="table table-bordered table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>Job Title</th>
+          <th>Location</th>
+          <th>Deadline</th>
+          <th>Applications</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for drive in active %}
+        <tr>
+          <td>{{ drive.job_title }}</td>
+          <td class="small text-muted">{{ drive.location or '—' }}</td>
+          <td class="small">{{ drive.application_deadline.strftime('%d %b %Y') }}</td>
+          <td>{{ drive.applications | length }}</td>
+          <td>
+            <a href="{{ url_for('drive_applications', drive_id=drive.id) }}" class="btn btn-sm btn-outline-primary">View Apps</a>
+            <a href="{{ url_for('edit_drive', drive_id=drive.id) }}" class="btn btn-sm btn-outline-secondary ms-1">Edit</a>
+            <a href="{{ url_for('close_drive', drive_id=drive.id) }}" class="btn btn-sm btn-outline-warning ms-1"
+               onclick="return confirm('Close this drive?')">Close</a>
+            <a href="{{ url_for('delete_drive', drive_id=drive.id) }}" class="btn btn-sm btn-outline-danger ms-1"
+               onclick="return confirm('Delete this drive? All applications will be lost.')">Delete</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="text-muted small">No active drives.</p>
+    {% endif %}
+  </div>
+</div>
+
+<!--ywt to approve-->
+{% set pending = drives | selectattr('status', 'equalto', 'pending') | list %}
+{% if pending %}
+<div class="row mt-3">
+  <div class="col-12">
+    <h5>Pending Admin Approval <span class="badge bg-warning text-dark">{{ pending | length }}</span></h5>
+    {% for drive in pending %}
+    <div class="card mb-2 border-warning">
+      <div class="card-body py-2 px-3 d-flex justify-content-between align-items-center">
+        <div>
+          <span class="fw-semibold">{{ drive.job_title }}</span>
+          <span class="text-muted small ms-2">Submitted {{ drive.created_at.strftime('%d %b %Y') }}</span>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('edit_drive', drive_id=drive.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+          <a href="{{ url_for('delete_drive', drive_id=drive.id) }}" class="btn btn-sm btn-outline-danger"
+             onclick="return confirm('Delete this drive?')">Delete</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!--rejected drives-->
+{% set rejected = drives | selectattr('status', 'equalto', 'rejected') | list %}
+{% if rejected %}
+<div class="row mt-3">
+  <div class="col-12">
+    <h5>Rejected Drives</h5>
+    {% for drive in rejected %}
+    <div class="card mb-2 border-danger">
+      <div class="card-body py-2 px-3 d-flex justify-content-between align-items-center">
+        <span class="fw-semibold">{{ drive.job_title }}</span>
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('edit_drive', drive_id=drive.id) }}" class="btn btn-sm btn-outline-primary">Edit & Resubmit</a>
+          <a href="{{ url_for('delete_drive', drive_id=drive.id) }}" class="btn btn-sm btn-outline-danger"
+             onclick="return confirm('Delete?')">Delete</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="row mt-3">
+  <div class="col-12">
+    <h5>Closed Drives</h5>
+    {% set closed = drives | selectattr('status', 'equalto', 'closed') | list %}
+    {% if closed %}
+    <table class="table table-sm text-muted">
+      <thead><tr><th>Job Title</th><th>Deadline</th><th>Total Applied</th></tr></thead>
+      <tbody>
+        {% for drive in closed %}
+        <tr>
+          <td>{{ drive.job_title }}</td>
+          <td>{{ drive.application_deadline.strftime('%d %b %Y') }}</td>
+          <td>{{ drive.applications | length }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="text-muted small">No closed drives yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

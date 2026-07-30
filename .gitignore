@@ -1,0 +1,16 @@
+*.pyo
+*.pyd
+*.history
+.history/
+
+venv/
+env/
+
+instance/
+.env
+
+__pycache__/
+*.pyc
+
+static/uploads/
+static/resume_uploads/

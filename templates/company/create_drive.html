@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+
+    {% if drive %}
+      <h4 class="mb-1">Edit Drive</h4>
+      <p class="text-muted small mb-4">After saving, the drive will be re-submitted for admin approval.</p>
+    {% else %}
+      <h4 class="mb-1">Create a New Drive</h4>
+      <p class="text-muted small mb-4">Your drive will go live after admin approves it.</p>
+    {% endif %}
+
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Job Title *</label>
+        <input type="text" name="job_title" class="form-control"
+          value="{{ drive.job_title if drive else '' }}"
+          placeholder="e.g. Software Engineer" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Job Description *</label>
+        <textarea name="job_description" class="form-control" rows="5" required
+          placeholder="Describe the role, responsibilities, tech stack...">{{ drive.job_description if drive else '' }}</textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Eligibility Criteria *</label>
+        <textarea name="eligibility_criteria" class="form-control" rows="3" required
+          placeholder="e.g. CGPA >= 7.0, CSE/IT, no active backlogs">{{ drive.eligibility_criteria if drive else '' }}</textarea>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Salary / CTC</label>
+          <input type="text" name="salary" class="form-control"
+            value="{{ drive.salary if drive else '' }}"
+            placeholder="e.g. 6-8 LPA">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Location</label>
+          <input type="text" name="location" class="form-control"
+            value="{{ drive.location if drive else '' }}"
+            placeholder="e.g. Bangalore, Remote">
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label">Application Deadline *</label>
+        <input type="datetime-local" name="application_deadline" class="form-control" required
+          value="{{ drive.application_deadline.strftime('%Y-%m-%dT%H:%M') if drive else '' }}">
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+          {% if drive %}Update Drive{% else %}Submit Drive{% endif %}
+        </button>
+        <a href="{{ url_for('company_dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

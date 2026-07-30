@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-2">
+  <div class="col-12">
+    <h3>Welcome, {{ student.name }}</h3>
+    <p class="text-muted">{{ student.branch }} &bull; Year {{ student.year }} &bull; CGPA: {{ student.cgpa }}</p>
+  </div>
+</div>
+
+<!--notifs banner-->
+{% if unread_notifications %}
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+  <strong>You have {{ unread_notifications | length }} new notification(s):</strong>
+  <ul class="mb-1 mt-1">
+    {% for n in unread_notifications %}
+      <li>{{ n.message }}</li>
+    {% endfor %}
+  </ul>
+  <a href="{{ url_for('mark_notifications_read') }}" class="btn btn-sm btn-outline-secondary mt-1">Mark all as read</a>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endif %}
+
+<hr>
+
+<div class="row mb-4 g-3">
+  <div class="col-md-4">
+    <div class="card text-center">
+      <div class="card-body">
+        <h2 class="text-primary mb-0">{{ open_drives | length }}</h2>
+        <small class="text-muted">Open Drives</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center">
+      <div class="card-body">
+        <h2 class="text-warning mb-0">{{ applications | length }}</h2>
+        <small class="text-muted">My Applications</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center">
+      <div class="card-body">
+        <h2 class="text-success mb-0">{{ applications | selectattr('status', 'in', ['selected', 'placed']) | list | length }}</h2>
+        <small class="text-muted">Selected / Placed</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <h5>Available Placement Drives</h5>
+
+    <!--search form for searchng drives-->
+    <form method="GET" action="{{ url_for('student_dashboard') }}" class="row g-2 mb-3">
+      <div class="col-md-4">
+        <input type="text" name="search_company" class="form-control form-control-sm"
+          placeholder="Search by company..." value="{{ search_company }}">
+      </div>
+      <div class="col-md-4">
+        <input type="text" name="search_position" class="form-control form-control-sm"
+          placeholder="Search by position..." value="{{ search_position }}">
+      </div>
+      <div class="col-md-3">
+        <input type="text" name="search_skills" class="form-control form-control-sm"
+          placeholder="Skills / keywords..." value="{{ search_skills }}">
+      </div>
+      <div class="col-md-1">
+        <button type="submit" class="btn btn-sm btn-primary w-100">Go</button>
+      </div>
+    </form>
+    {% if search_company or search_position or search_skills %}
+      <p class="text-muted small mb-2">
+        Showing {{ open_drives | length }} result(s) &mdash;
+        <a href="{{ url_for('student_dashboard') }}">Clear search</a>
+      </p>
+    {% endif %}
+
+    {% if open_drives %}
+      {% for drive in open_drives %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+              <h6 class="mb-1">{{ drive.job_title }}</h6>
+              <p class="text-muted small mb-1">
+                <strong>{{ drive.company.company_name }}</strong>
+                {% if drive.location %} &bull; {{ drive.location }}{% endif %}
+                {% if drive.salary %} &bull; {{ drive.salary }}{% endif %}
+              </p>
+              <p class="small mb-1">{{ drive.job_description[:130] }}{% if drive.job_description | length > 130 %}...{% endif %}</p>
+              <p class="small text-muted mb-0">
+                <em>Eligibility: {{ drive.eligibility_criteria[:80] }}{% if drive.eligibility_criteria | length > 80 %}...{% endif %}</em>
+              </p>
+            </div>
+            <div class="ms-3 text-end flex-shrink-0">
+              <div class="small text-muted mb-2">
+                Deadline:<br>{{ drive.application_deadline.strftime('%d %b %Y') }}
+              </div>
+              {% if drive.id in applied_drive_ids %}
+                <span class="badge bg-secondary">Applied</span>
+              {% else %}
+                <a href="{{ url_for('apply_drive', drive_id=drive.id) }}" class="btn btn-sm btn-primary">Apply</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted">No drives found.</p>
+    {% endif %}
+  </div>
+
+  <!--sidebar w applications n profile-->
+  <div class="col-md-4">
+    <h5>My Applications</h5>
+
+    {% if applications %}
+      {% for app in applications %}
+      <div class="card mb-2">
+        <div class="card-body py-2 px-3">
+          <p class="mb-0 fw-semibold small">{{ app.drive.job_title }}</p>
+          <p class="mb-0 text-muted small">{{ app.drive.company.company_name }}</p>
+          <div class="d-flex justify-content-between align-items-center mt-1">
+            <span class="badge
+              {% if app.status in ['selected', 'placed'] %}bg-success
+              {% elif app.status in ['shortlisted', 'interview'] %}bg-info text-dark
+              {% elif app.status == 'rejected' %}bg-danger
+              {% else %}bg-secondary{% endif %}">
+              {{ app.status | capitalize }}
+            </span>
+            <small class="text-muted">{{ app.application_date.strftime('%d %b') }}</small>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted small">No applications yet.</p>
+    {% endif %}
+
+    <hr>
+    <h5>My Profile</h5>
+    <ul class="list-unstyled small mb-3">
+      <li><strong>Roll No:</strong> {{ student.roll_number }}</li>
+      <li><strong>Phone:</strong> {{ student.phone }}</li>
+      <li class="mt-1"><strong>Resume:</strong>
+        {% if student.resume_filename %}
+          <a href="{{ url_for('static', filename='uploads/' + student.resume_filename) }}" target="_blank">View</a>
+        {% else %}
+          <span class="text-muted">Not uploaded</span>
+        {% endif %}
+      </li>
+    </ul>
+    <a href="{{ url_for('student_profile') }}" class="btn btn-sm btn-outline-secondary w-100">Edit Profile / Upload Resume</a>
+  </div>
+</div>
+{% endblock %}

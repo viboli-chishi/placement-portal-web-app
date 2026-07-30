@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4>Student Profile</h4>
+      <a href="{{ url_for('company_dashboard') }}" class="btn btn-outline-secondary btn-sm">← Back</a>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-8">
+            <h5 class="mb-1">{{ student.name }}</h5>
+            <p class="text-muted mb-2">{{ student.branch }} &bull; Year {{ student.year }}</p>
+            <table class="table table-sm table-borderless mb-0" style="width:auto">
+              <tr><td class="text-muted pe-4">Roll No</td><td>{{ student.roll_number }}</td></tr>
+              <tr><td class="text-muted pe-4">CGPA</td><td>{{ student.cgpa }}</td></tr>
+              <tr><td class="text-muted pe-4">Phone</td><td>{{ student.phone }}</td></tr>
+              <tr><td class="text-muted pe-4">Email</td><td>{{ student.user.email }}</td></tr>
+            </table>
+          </div>
+          <div class="col-md-4 text-end">
+            {% if student.resume_filename %}
+              <a href="{{ url_for('static', filename='uploads/' + student.resume_filename) }}"
+                 target="_blank" class="btn btn-primary">
+                View Resume
+              </a>
+            {% else %}
+              <span class="text-muted small">No resume uploaded</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--applications this student made to our drives-->
+    <h5 class="mb-3">Applications to Your Drives</h5>
+    {% for app in applications %}
+    <div class="card mb-2">
+      <div class="card-body py-2 px-3 d-flex justify-content-between align-items-center">
+        <div>
+          <p class="mb-0 fw-semibold">{{ app.drive.job_title }}</p>
+          <p class="mb-0 text-muted small">Applied on {{ app.application_date.strftime('%d %b %Y') }}</p>
+        </div>
+        <span class="badge
+          {% if app.status == 'selected' or app.status == 'placed' %}bg-success
+          {% elif app.status == 'shortlisted' or app.status == 'interview' %}bg-info text-dark
+          {% elif app.status == 'rejected' %}bg-danger
+          {% else %}bg-secondary{% endif %}">
+          {{ app.status | capitalize }}
+        </span>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+</div>
+{% endblock %}
